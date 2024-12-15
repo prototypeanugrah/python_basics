@@ -1,5 +1,5 @@
 ---
-title: "Statistical inference with the GSS data"
+# "Statistical inference with the GSS data"
 ---
 
 ## Setup
