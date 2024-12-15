@@ -1,10 +1,5 @@
 ---
 title: "Statistical inference with the GSS data"
-output: 
-  html_document: 
-    fig_height: 4
-    highlight: pygments
-    theme: spacelab
 ---
 
 ## Setup
@@ -47,52 +42,47 @@ Modifications made : <br>
 ## Part 3: Exploratory data analysis
 
 ```{r}
-#Subset the data
 study_data <- select(gss,year,class,homosex) %>% na.omit() %>%
   mutate(positive=grepl("Not Wrong At All",homosex)) %>%
   mutate(recent=as.factor(ifelse(year>=2006,"R","H")))
 
-#summary of the whole data
-
 all_time <- study_data
 summary(all_time)
-
 ```
+
 ```{r}
 all_time_table <- table(all_time$class,all_time$positive)
 all_time_table
 ```
+
 ```{r}
 prop.table(all_time_table)
 ```
 
 ```{r}
-#Visualization of data
 g <- ggplot(all_time) + aes(x=class,fill=positive) + geom_bar(position = "fill") +
   labs(x="Social class",y="Proportion",title="Opinion of social class towards homosexuality") +
   scale_fill_discrete(name="Opinion",labels=c("Positive view","Negative view"))
-g
 ```
 <br>We can see that there is difference in attitude towards homosexuals among the different social classes before 2006(historical time). We do not notice much difference in bias towards homosexuals as the social class progresses.
 <br>
 Now, for the analysis of year 2006 and later.<br>
 ```{r}
 since_2006 <- filter(all_time,recent=="R")
-summary(since_2006)
 ```
+
 ```{r}
 since_2006_table <- table(since_2006$class,since_2006$positive)
-since_2006_table
 ```
+
 ```{r}
 prop.table(since_2006_table)
 ```
+
 ```{r}
-#Visualization of data
 h <- ggplot(since_2006) + aes(x=class,fill=positive) + geom_bar(position = "fill") + 
   labs(x="Social class",y="Proportion",title="View of social class towards homosexuality") +
   scale_fill_discrete(name="Opinion",labels=c("Positive view","Negative view"))
-h
 ```
 <br>We again see difference in attitude towards homosexuals among the different social classes from 2006 and afterwards(recent times). Again not much difference in attitude bias towards homosexuals as social class progresses in recent times.
 <br>
@@ -101,7 +91,6 @@ A visual comparison between historical and recent times was analyzed.
  i<- ggplot(all_time) + aes(x=recent,fill=positive) + geom_bar(position = "fill") + facet_grid(.~class) +
   labs(x="Historical versus Recent",y="Proportion",title="View of social class towards homosexuality") +
   scale_fill_discrete(name="Opinion",labels=c("Positive view","Negative view"))
-i
 ```
 <br>As we can see from the above analysis graph, we can see a considerable increase in biased attitude towards homosexuals in the recent times among all classes
 
@@ -123,8 +112,8 @@ Conditions : <br>
 2. As seen below, there are at least 5 counts for each cell except "no class" category.<br>
 ```{r}
 study_table1 <- table(all_time$class,all_time$positive)
-study_table1
 ```
+
 ```{r}
 sum(study_table1<=5)
 ```
@@ -135,7 +124,6 @@ t1
 ```
 ```{r}
 study_table2 <- table(since_2006$class,since_2006$positive)
-study_table2
 ```
 Now 2 cells have count < 5.
 ```{r}
@@ -149,11 +137,9 @@ t2
 Now, Chi-Squared test for independence was performed on both the data sets - the entire data set and the recent sub-set.
 ```{r}
 c_all_time <- chisq.test(t1, all_time$class,all_time$positive)
-c_all_time
 ```
 ```{r}
 c_since_2006 <- chisq.test(t2, since_2006$class,since_2006$positive)
-c_since_2006
 ```
 As can be seen from the above results obtained, in both the cases, the null hypothesis was rejected and there is a significant association between social class and their opinion on homosexuality of respondents.<br>
 Hence, we can infer that "Attitude towards homosexuality varies by social class"
